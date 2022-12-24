@@ -83,3 +83,110 @@ class Car{
     }
 }
 const f = new Car("benci")
+
+
+// 深拷贝和浅拷贝
+// 浅拷贝：拷贝的是对象的指针，修改内容互相影响
+// 深拷贝：整个对象拷贝到另一个内存中，修改内容互不影响
+// 深拷贝的方法
+// 1.JSON.parse(JSON.stringfy(Object))
+// 2.如果只有一层 {...Object} Object.assign({},Object)
+// 3.手写深拷贝，利用递归,思路：首先判断是否为引用类型，如果不是直接返回，然后根据引用类型的不同，创建默认值，然后循环递归赋值
+// WeakMap和Map是为了防止内存溢出，WeakMap在执行完之后会释放掉内存。
+
+function getInit(target) {
+    const Ctor = target.constructor;
+    return new Ctor();
+}
+
+const clone = (target,map=new WeakMap())=>{
+    if((typeof target === "object"||typeof target === "function")&&target !== null){
+
+        let cloneTarget 
+        cloneTarget = getInit(target)
+
+        if (map.get(target)) {
+            return map.get(target);
+        }
+        map.set(target, cloneTarget);
+        if(Object.prototype.toString.call(target) === "[object Set]"){
+            target.forEach((value)=>{
+                cloneTarget.add(clone(value,map))
+            })
+            return cloneTarget
+        }
+        if(Object.prototype.toString.call(target) === "[object Map]"){
+            target.forEach((value,key)=>{
+                cloneTarget.set(key,clone(value,map))
+            })
+            return cloneTarget
+        }
+
+        Array.isArray(target)?[]:{}
+        for(let key in target){
+            cloneTarget[key] = clone(target[key],map)
+        }
+        return cloneTarget
+    }else{
+        return target
+    }
+}
+
+let wuhu = {name:"张三",age:16,hobby:["唱","跳","rap","篮球"],grade:{chinese:98,math:0,english:60}}
+console.log(clone(wuhu))
+
+// 层级数组转树
+const arr = [
+    { id: '01', name: '张大大', pid: '', job: '项目经理' },
+    { id: '02', name: '小亮', pid: '01', job: '产品leader' },
+    { id: '03', name: '小美', pid: '01', job: 'UIleader' },
+    { id: '04', name: '老马', pid: '01', job: '技术leader' },
+    { id: '05', name: '老王', pid: '01', job: '测试leader' },
+    { id: '06', name: '老李', pid: '01', job: '运维leader' },
+    { id: '07', name: '小丽', pid: '02', job: '产品经理' },
+    { id: '08', name: '大光', pid: '02', job: '产品经理' },
+    { id: '09', name: '小高', pid: '03', job: 'UI设计师' },
+    { id: '10', name: '小刘', pid: '04', job: '前端工程师' },
+    { id: '11', name: '小华', pid: '04', job: '后端工程师' },
+    { id: '12', name: '小李', pid: '04', job: '后端工程师' },
+    { id: '13', name: '小赵', pid: '05', job: '测试工程师' },
+    { id: '14', name: '小强', pid: '05', job: '测试工程师' },
+    { id: '15', name: '小涛', pid: '06', job: '运维工程师' }
+]
+
+const listToTree = (list = [],parentKey="pid")=>{
+    const map = {}
+    const root = []
+    list.forEach(item=>{
+        if(!item.children){
+            item.children = []
+        }
+        map[item.id] = item
+    })
+
+    list?.forEach((item)=>{
+        if(item[parentKey]!==""){
+            map[item[parentKey]]?.children?.unshift(item)
+        }else{
+            root.unshift(item)
+        }
+    })
+    return root
+}
+// console.log(listToTree(arr))
+const clo = clone(listToTree(arr))
+console.log(clo)
+// 树转数组
+const getItems = (list) => {
+    let tempList = [];
+    tempList = [...list.map((item) => {
+      if (item?.children) {
+        tempList = [...tempList, ...getItems(item.children)];
+      }
+      return {
+        id: item?.id, name: item?.name, pid: item?.pid,job:item.job
+      };
+    }), ...tempList];
+    return tempList;
+  };
+  console.log(getItems(clo))

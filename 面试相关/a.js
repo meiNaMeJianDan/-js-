@@ -31,3 +31,8 @@
 
 // flex 1 的具体属性
 // flex属性是 flex-grow：1,flex-shrink：1,flex-basis：auto的集合
+
+// 文本超出部分变成省略号
+// text-overflow:ellipsis;
+// overflow:hidden;
+// white-space:nowrap
