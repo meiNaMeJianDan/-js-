@@ -36,3 +36,22 @@
 // text-overflow:ellipsis;
 // overflow:hidden;
 // white-space:nowrap
+
+let arr = ["1.2.3", "1.22.333", "3.0.3.22", "0.1", "2.2.2.2.2", "2.2"];
+arr.sort(function (a, b) {
+    let aArr = a.split('.');
+    let bArr = b.split('.');
+    let length = Math.max(aArr.length, bArr.length);
+    for (let i = 0; i < length; i++) {
+        let aVal = aArr[i] || 0;
+        let bVal = bArr[i] || 0;
+        if (aVal > bVal) {
+            return -1;
+        }
+        if (aVal < bVal) {
+            return 1;
+        }
+    }
+    return 0;
+});
+console.log(arr);

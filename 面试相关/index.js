@@ -190,3 +190,12 @@ const getItems = (list) => {
     return tempList;
   };
   console.log(getItems(clo))
+
+  const aaaa = ()=>{
+    console.log("aaaa");
+    let list = [1,2,3,4,5,6]
+    list.map((item,index)=>{
+        console.log(item,index)
+    })
+  }
+  aaaa()
